@@ -373,7 +373,9 @@ export default function TeacherPanel() {
 
         socketRef.current = io(SOCKET_SERVER_URL, {
             withCredentials: true,
+            reconnection: true,
             query: { userId: loggedInUserId }
+            
         })
 
         socketRef.current.on('connect', () => {
@@ -434,24 +436,31 @@ export default function TeacherPanel() {
     }
 
     const fetchNotifications = useCallback(async () => {
-        const currentToken = localStorage.getItem('token')
-        if (!loggedInUserId || !currentToken) return
-        
-        setLoading(true)
-        try {
-            const res = await axios.get(`${API_BASE_URL}/notifications/${loggedInUserId}`, {
-                headers: { Authorization: `Bearer ${currentToken}` }
-            })
-            setNotifications(res.data)
-            const unreadCount = res.data.filter(n => !n.read_status).length
-            setUnreadNotificationCount(unreadCount)
-        } catch (e) {
-            console.error('Error cargando notificaciones:', e)
-            toast.error('Error cargando notificaciones')
-        } finally {
-            setLoading(false)
-        }
-    }, [loggedInUserId])
+  const currentToken = localStorage.getItem('token');
+  if (!loggedInUserId || !currentToken) return;
+  
+  setLoading(true);
+  try {
+    const res = await axios.get(`${API_BASE_URL}/notifications/${loggedInUserId}`, {
+      headers: { Authorization: `Bearer ${currentToken}` }
+    });
+
+    // Validación robusta
+    const notifications = Array.isArray(res.data?.notifications || res.data)
+      ? (res.data.notifications || res.data)
+      : [];
+
+    setNotifications(notifications);
+    const unreadCount = notifications.filter(n => !n.read_status).length;
+    setUnreadNotificationCount(unreadCount);
+  } catch (e) {
+    console.error('Error cargando notificaciones:', e);
+    toast.error(e.response?.data?.message || 'Error cargando notificaciones');
+    setNotifications([]);
+  } finally {
+    setLoading(false);
+  }
+}, [loggedInUserId, API_BASE_URL]);
 
     const markNotificationAsRead = async (notificationId) => {
         const currentToken = localStorage.getItem('token')
@@ -522,17 +531,37 @@ export default function TeacherPanel() {
     }, [profesorId])
 
     const fetchClassGroups = useCallback(async () => {
-        const currentToken = localStorage.getItem('token')
-        if (!currentToken) return
-        try {
-            const res = await axios.get(`${API_BASE_URL}/class-groups`, {
-                headers: { Authorization: `Bearer ${currentToken}` }
-            })
-            setClassGroups(res.data)
-        } catch (e) {
-            console.error('Error cargando grupos de clase:', e)
-        }
-    }, [])
+  const currentToken = localStorage.getItem('token');
+  if (!currentToken) {
+    setClassGroups([]);
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const res = await axios.get(`${API_BASE_URL}/class-groups`, {
+      headers: { Authorization: `Bearer ${currentToken}` }
+    });
+
+    // Verificación robusta de la respuesta
+    if (!res.data) {
+      throw new Error('No se recibieron datos');
+    }
+
+    // Manejar diferentes formatos de respuesta
+    const groupsData = Array.isArray(res.data) 
+      ? res.data 
+      : (Array.isArray(res.data.classGroups) ? res.data.classGroups : []);
+
+    setClassGroups(groupsData);
+  } catch (error) {
+    console.error('Error cargando grupos:', error);
+    setClassGroups([]); // Asegurar array vacío en caso de error
+    toast.error(error.response?.data?.message || 'Error al cargar grupos');
+  } finally {
+    setLoading(false);
+  }
+}, [API_BASE_URL]);
 
     const fetchPosts = useCallback(async () => {
         const currentToken = localStorage.getItem('token')
@@ -578,27 +607,54 @@ export default function TeacherPanel() {
         } finally {
             setLoading(false)
         }
-    }, [])
+    }, [API_BASE_URL]);
 
     const fetchAlumnos = useCallback(async () => {
-        const currentToken = localStorage.getItem('token')
-        if (!profesorId || !currentToken) {
-            setAlumnos([])
-            return
+    const currentToken = localStorage.getItem('token');
+    if (!profesorId || !currentToken) {
+        setAlumnos([]); // Asegurar array vacío
+        return;
+    }
+
+    setLoading(true);
+    try {
+        const res = await axios.get(`${API_BASE_URL}/alumnos/profesores/${profesorId}/alumnos`, {
+            headers: { Authorization: `Bearer ${currentToken}` }
+        });
+
+        // Verificación robusta de la respuesta
+        if (!res.data) {
+            throw new Error('Respuesta vacía del servidor');
         }
-        setLoading(true)
-        try {
-            const res = await axios.get(`${API_BASE_URL}/alumnos/profesores/${profesorId}/alumnos`, {
-                headers: { Authorization: `Bearer ${currentToken}` }
-            })
-            setAlumnos(res.data)
-        } catch (e) {
-            console.error('Error cargando alumnos:', e)
-            setAlumnos([])
-        } finally {
-            setLoading(false)
-        }
-    }, [profesorId])
+
+        // Manejar diferentes formatos de respuesta
+        const alumnosData = Array.isArray(res.data) 
+            ? res.data 
+            : (Array.isArray(res.data.alumnos) ? res.data.alumnos : []);
+
+        // Formatear datos con valores por defecto
+        const formattedAlumnos = alumnosData.map(alumno => ({
+            id: alumno.id || '',
+            nombre: alumno.nombre || 'Sin nombre',
+            apellido: alumno.apellido || '',
+            email: alumno.email || '',
+            // ...otros campos con valores por defecto
+        }));
+
+        setAlumnos(formattedAlumnos);
+    } catch (error) {
+        console.error('Error cargando alumnos:', error);
+        setAlumnos([]); // Asegurar array vacío en caso de error
+        
+        // Mostrar feedback al usuario
+        toast.error(
+            error.response?.data?.message || 
+            'Error al cargar la lista de alumnos'
+        );
+    } finally {
+        setLoading(false);
+    }
+}, [profesorId, API_BASE_URL]);
 
     const fetchAsistencia = useCallback(async () => {
         const currentToken = localStorage.getItem('token')

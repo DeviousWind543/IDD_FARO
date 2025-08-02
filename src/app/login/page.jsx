@@ -117,6 +117,7 @@ export default function LoginPage() {
                         type="password"
                         name="password"
                         placeholder="Contraseña"
+                        autoComplete="current-password"
                         value={form.password}
                         onChange={handleChange}
                         required

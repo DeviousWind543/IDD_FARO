@@ -68,47 +68,52 @@ export default function DashboardPage() {
 
 
   // Lógica de conexión de Socket.IO (ahora en DashboardPage)
-  useEffect(() => {
-    if (typeof window === 'undefined' || !userId) return; // Espera a que userId esté disponible
+  // En DashboardPage.jsx
+useEffect(() => {
+    if (!userId) return;
 
-    if (!socketRef.current) {
-      socketRef.current = io(SOCKET_SERVER_URL, {
-        withCredentials: true,
-      });
-    }
-
-    socketRef.current.on('connect', () => {
-      console.log('🎉 [DashboardPage] Conectado al servidor Socket.IO:', socketRef.current.id);
-      // Emitir el evento para marcar al usuario como online
-      socketRef.current.emit('set-user-online', userId);
-      console.log(`[DashboardPage] Emitido 'set-user-online' para userId: ${userId}`);
+    const socket = io(SOCKET_SERVER_URL, {
+      withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      transports: ['websocket'],
+      query: { userId }
     });
 
-    socketRef.current.on('online-users-updated', (users) => {
-      console.log('🔄 [DashboardPage] Lista de usuarios online actualizada recibida:', users.length);
-      setConnectedUsers(users);
-      setConnectedUsersCount(users.length);
-    });
+    socketRef.current = socket;
 
-    socketRef.current.on('disconnect', () => {
-      console.log('🔌 [DashboardPage] Desconectado del servidor Socket.IO');
-    });
+    const handleConnect = () => {
+      console.log('Conectado a Socket.IO');
+      socket.emit('set-user-online', userId);
+    };
 
-    socketRef.current.on('connect_error', (err) => {
-      console.error('❌ [DashboardPage] Error de conexión Socket.IO:', err.message);
-      // En caso de error de conexión, podrías querer intentar obtener los usuarios por HTTP como fallback
-      // Sin embargo, para la lista de conectados en tiempo real, la conexión de socket es clave.
-    });
-
-    // Limpiar al desmontar el componente
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null; // Limpiar la referencia
-        console.log('[DashboardPage] Socket.IO desconectado al desmontar DashboardPage.');
+    const handleDisconnect = (reason) => {
+      console.log('Desconectado de Socket.IO:', reason);
+      if (reason === 'io server disconnect') {
+        socket.connect();
       }
     };
-  }, [userId]); // Dependencia en userId para asegurar que se conecte una vez que el ID del usuario esté disponible
+
+    const handleUsersUpdate = (users) => {
+      setConnectedUsers(Array.isArray(users) ? users : []);
+      setConnectedUsersCount(Array.isArray(users) ? users.length : 0);
+    };
+
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('online-users-updated', handleUsersUpdate);
+    socket.on('connect_error', (err) => {
+      console.error('Error de conexión Socket.IO:', err.message);
+    });
+
+    return () => {
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('online-users-updated', handleUsersUpdate);
+      socket.disconnect();
+    };
+  }, [userId]);// Dependencia en userId para asegurar que se conecte una vez que el ID del usuario esté disponible
 
   // Lógica para enviar heartbeat periódicamente (opcional, pero buena práctica)
   // Mantenemos esta lógica aquí, ya que es a nivel de sesión de usuario

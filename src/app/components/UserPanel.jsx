@@ -45,11 +45,30 @@ export default function UserPanel({ currentUserName, setUserName }) {
     const [attendanceMessage, setAttendanceMessage] = useState('');
     const [attendanceLoading, setAttendanceLoading] = useState(false);
 
-    // --- NUEVOS ESTADOS PARA LA BÚSQUEDA DE ESTUDIANTES (ROL 3) ---
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-    const [searchLoading, setSearchLoading] = useState(false);
-    const [searchError, setSearchError] = useState('');
+const handleAttendanceLookup = useCallback(async () => {
+  if (!cedulaInput.trim()) {
+    setAttendanceMessage('Por favor ingrese una cédula o nombre');
+    return;
+  }
+
+  setAttendanceLoading(true);
+  const token = localStorage.getItem('token');
+  
+  try {
+    const res = await axios.get(`${API_BASE_URL}/asistencia?cedula=${encodeURIComponent(cedulaInput)}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    setAttendanceData(res.data);
+    setAttendanceMessage('');
+  } catch (error) {
+    console.error('Error buscando asistencia:', error);
+    setAttendanceMessage(error.response?.data?.message || 'Error al buscar asistencia');
+    setAttendanceData(null);
+  } finally {
+    setAttendanceLoading(false);
+  }
+}, [cedulaInput]);
 
     // --- NUEVOS ESTADOS PARA EL MODAL DE CONFIRMACIÓN DE ELIMINACIÓN ---
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -75,21 +94,22 @@ export default function UserPanel({ currentUserName, setUserName }) {
 
     // --- Funciones para Posts ---
     const fetchPosts = useCallback(async () => {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-        if (!token) return;
-        setLoading(true);
-        try {
-            const res = await axios.get(`${API_BASE_URL}/posts`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setPosts(res.data);
-        } catch (e) {
-            console.error('Error cargando posts:', e.response ? e.response.data : e.message);
-            setPosts([]);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  if (!token) return;
+  setLoading(true);
+  try {
+    const res = await axios.get(`${API_BASE_URL}/posts`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    // Asegúrate de que res.data sea un array
+    setPosts(Array.isArray(res.data) ? res.data : []);
+  } catch (e) {
+    console.error('Error cargando posts:', e.response ? e.response.data : e.message);
+    setPosts([]); // Siempre establece un array vacío en caso de error
+  } finally {
+    setLoading(false);
+  }
+}, []);
 
     const handlePostInputChange = (e) => {
         const { name, value } = e.target;

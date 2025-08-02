@@ -341,26 +341,39 @@ export default function AdminPanel() {
     }, []);
 
     const fetchPosts = useCallback(async () => {
-        setLoadingPosts(true);
-        try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`${API_BASE_URL}/posts`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const formattedPosts = res.data.map(post => ({
-                ...post,
-                author_name: post.user_name,
-                media: post.media_urls || [],
-                currentMediaIndex: 0,
-            }));
-            setPosts(formattedPosts);
-        } catch (err) {
-            console.error('Error cargando posts:', err);
-            setPosts([]);
-        } finally {
-            setLoadingPosts(false);
-        }
-    }, []);
+  setLoadingPosts(true);
+  try {
+    const token = localStorage.getItem('token');
+    const res = await axios.get(`${API_BASE_URL}/posts`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    // Verificación robusta de la respuesta
+    if (!res.data) {
+      throw new Error('No se recibieron datos');
+    }
+
+    // Manejar diferentes formatos de respuesta
+    const postsData = Array.isArray(res.data) 
+      ? res.data 
+      : (Array.isArray(res.data.posts) ? res.data.posts : []);
+
+    const formattedPosts = postsData.map(post => ({
+      ...post,
+      author_name: post.user_name || 'Desconocido',
+      media: Array.isArray(post.media_urls) ? post.media_urls : [],
+      currentMediaIndex: 0,
+    }));
+
+    setPosts(formattedPosts);
+  } catch (err) {
+    console.error('Error cargando posts:', err);
+    setPosts([]);
+    toast.error('Error al cargar los posts');
+  } finally {
+    setLoadingPosts(false);
+  }
+}, [API_BASE_URL]);
 
     const handleDownloadPdf = async () => {
         try {
