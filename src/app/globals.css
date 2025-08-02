@@ -4,7 +4,35 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+/* Mejora el efecto de backdrop-filter en Firefox */
+@supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
+    .backdrop-blur-md {
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+    }
+}
 
+/* Estilos para las imágenes y videos en el modal */
+.modal-media-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-media-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Placeholder para medios */
+.media-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2d3748;
+    color: #cbd5e0;
+    font-size: 0.75rem;
+    text-align: center;
+    padding: 0.5rem;
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
