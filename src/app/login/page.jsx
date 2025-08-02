@@ -2,7 +2,7 @@
 'use client'; // Indica que este componente es un Client Component en Next.js App Router
 
 import { useState } from 'react'; // Hook para manejar el estado del componente
-import axios from '@/lib/axios'; // Cliente HTTP para hacer peticiones al backend
+import axios from 'axios'; // Cliente HTTP para hacer peticiones al backend
 import { useRouter } from 'next/navigation'; // Hook de Next.js para la navegación programática
 
 // --- CONFIGURACIÓN DE LA URL DE LA API ---
