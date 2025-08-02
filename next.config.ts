@@ -1,7 +1,10 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+// next.config.js
+const nextConfig = {
+  // Las propiedades "output: 'export'", "trailingSlash" y "basePath"
+  // son solo para exportaciones estáticas y no se necesitan en Vercel.
+  images: {
+    unoptimized: true,
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
