@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev -H 192.168.0.101 --turbopack",
     "build": "next build",
+    "build:deploy": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "next build"
   },
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",
