@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
 :root {
+  /* Colores para Modo Claro */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
+  --card-bg: #f8fafc;
+  --border-color: #e2e8f0;
+}
+
+.dark {
+  /* Colores para Modo Oscuro */
+  --background: #020617; 
+  --foreground: #f8fafc;
+  --card-bg: #1e293b;
+  --border-color: #334155;
 }
 /* Mejora el efecto de backdrop-filter en Firefox */
 @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
@@ -40,15 +51,79 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+/* styles/globals.css */
+@layer base {
+  :root {
+    --touch-min-size: 48px;
+  }
+  
+  /* Mejorar legibilidad en móviles */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Touch targets */
+  button, a[role="button"] {
+    min-width: var(--touch-min-size);
+    min-height: var(--touch-min-size);
+  }
+  
+  /* Optimizar modales para mobile */
+  @media (max-width: 640px) {
+    .modal-content {
+      width: 95vw;
+      margin: 0 auto;
+    }
+  }
+}
+/* Agrega esto a tu archivo globals.css */
+@media (max-width: 767px) { /* Este es el breakpoint 'md' de Tailwind */
+  .responsive-table tbody tr {
+    @apply mb-4 block rounded-lg border border-gray-700 p-4 shadow-md;
+  }
+  .responsive-table thead {
+    @apply hidden; /* Ocultamos la cabecera original en móvil */
+  }
+  .responsive-table td {
+    @apply block border-b border-gray-700 py-2 text-left;
+  }
+  .responsive-table td:last-child {
+      @apply border-b-0; /* Elimina el borde de la última celda */
+  }
+  .responsive-table td[data-label]::before {
+    content: attr(data-label); /* Muestra el texto del atributo data-label */
+    @apply float-left mr-4 font-bold text-lime-400; /* Estiliza la etiqueta */
+  }
+}
+@keyframes neonSweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.neon-text {
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    rgba(107, 255, 107, 0.2) 0%,
+    #6BFF6B 50%,
+    rgba(107, 255, 107, 0.2) 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: neonSweep 3s linear infinite;
+}
+
+
