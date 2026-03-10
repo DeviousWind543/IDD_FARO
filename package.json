@@ -2,10 +2,10 @@
   "name": "frontend-next",
   "version": "0.1.0",
   "private": true,
- "scripts": {
+"scripts": {
   "dev": "next dev",
   "build": "next build",
-  "deploy": "next build"
+  "export": "next export"
 },
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",

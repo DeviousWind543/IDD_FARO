@@ -1,9 +1,9 @@
-name: Deploy to GitHub Pages
+name: Deploy Next.js to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -11,32 +11,29 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout
+      - name: Clonar repositorio
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Instalar Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: 20
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Instalar dependencias
+        run: npm install
 
-      - name: Build and Export
-        run: npm run deploy
-        env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      - name: Build Next.js
+        run: npm run build
 
-      - name: Deploy to GitHub Pages
+      - name: Export static
+        run: npm run export
+
+      - name: Deploy a GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./out
-          publish_branch: gh-pages
-          force_orphan: true
-          enable_jekyll: false
