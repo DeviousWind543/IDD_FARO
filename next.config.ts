@@ -1,19 +1,14 @@
 import type { NextConfig } from "next";
 
-const isProd = process.env.NODE_ENV === "production";
-
 const nextConfig: NextConfig = {
-  output: "export",
-
-  basePath: isProd ? "/IDD_FARO" : "",
-  assetPrefix: isProd ? "/IDD_FARO/" : "",
+  output: 'export', // Asegura que se genere la carpeta 'out'
+  basePath: '/IDD_FARO', 
+  assetPrefix: '/IDD_FARO/', // Crucial para los archivos estáticos
   devIndicators: false,
 
   images: {
-    unoptimized: true,
+    unoptimized: true, // Requerido para exportación estática en GH Pages
   },
-
-  trailingSlash: true,
 };
 
 export default nextConfig;

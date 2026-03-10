@@ -22,15 +22,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm' # Añadido para acelerar futuras ejecuciones
 
       - name: Instalar dependencias
-        run: npm install
+        run: npm ci # 'npm ci' es más rápido y seguro en entornos CI
 
       - name: Build Next.js
+        # Pasamos la variable de entorno por si decides usarla en tu config
         run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /IDD_FARO
 
       - name: Deploy a GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./out
+          # Esto asegura que no se borren archivos como .nojekyll si los generas
+          keep_files: false
