@@ -2,14 +2,11 @@
   "name": "frontend-next",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev -H 192.168.0.111 --turbopack",
-    "build": "next build",
-    "build:deploy": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "deploy": "next build"
-  },
+ "scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "deploy": "next build"
+},
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",
     "axios": "^1.10.0",
