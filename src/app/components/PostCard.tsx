@@ -40,7 +40,6 @@ export interface Post { // Exportado para ser usado en TeacherPanel.tsx
 
 interface PostCardProps {
   post: Post;
-  theme: 'dark' | 'light';
   currentUserId: string | number | null; // Asegúrate de que el tipo sea consistente
   onDeletePost: (post: Post) => void; // CAMBIO AQUÍ: Ahora espera el objeto Post completo
   onStartEditPost: (post: Post) => void;
@@ -51,6 +50,7 @@ interface PostCardProps {
   onDeleteComment: (commentId: string, postId: string) => void; // Actualizado el orden de los parámetros
   onUpdateComment: (commentId: string, postId: string, content: string) => void; // Actualizado el orden de los parámetros
   currentUserRole?: number; // ¡CORRECCIÓN DE ERROR! Añadido para resolver el error de tipado.
+  theme?: 'dark' | 'light';
 }
 
 const PostCard: React.FC<PostCardProps> = ({
