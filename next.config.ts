@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export', // Asegura que se genere la carpeta 'out'
+  output: 'export',
   basePath: '/IDD_FARO', 
-  assetPrefix: '/IDD_FARO/', // Crucial para los archivos estáticos
+  assetPrefix: '/IDD_FARO/',
+  trailingSlash: true, // Agrega una barra al final de las URLs, mejor para servidores estáticos
   devIndicators: false,
-
   images: {
-    unoptimized: true, // Requerido para exportación estática en GH Pages
+    unoptimized: true,
   },
 };
 

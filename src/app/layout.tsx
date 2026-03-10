@@ -16,6 +16,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Escuelita Bíblica",
   description: "Sistema de gestión avanzada",
+  // ✅ Solución al error de CSP: Permite la ejecución necesaria para Next.js 15
+  other: {
+    'Content-Security-Policy': "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none';",
+  },
 };
 
 export default function RootLayout({
@@ -24,6 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    // suppressHydrationWarning es clave cuando usas ThemeProvider para evitar parpadeos
     <html lang="es" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider>
