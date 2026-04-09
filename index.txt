@@ -1,0 +1,9 @@
+2:I[7831,[],""]
+3:I[6039,["220","static/chunks/220-4baf5cc9df729e90.js","396","static/chunks/396-6cc8bb17508e84ce.js","691","static/chunks/691-95d2cca52b807a51.js","931","static/chunks/app/page-c1479edac40daaa1.js"],""]
+4:I[6713,["185","static/chunks/app/layout-e96b03f2e875dcec.js"],"ThemeProvider"]
+5:I[5613,[],""]
+6:I[1778,[],""]
+7:I[8667,["396","static/chunks/396-6cc8bb17508e84ce.js","160","static/chunks/app/not-found-b530da40b4e7217a.js"],""]
+0:["MFgl8ZawDZY_f6N1TILyf",[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],["",{"children":["__PAGE__",{},["$L1",["$","$L2",null,{"propsForComponent":{"params":{}},"Component":"$3","isStaticGeneration":true}],null]]},[null,["$","html",null,{"lang":"es","suppressHydrationWarning":true,"children":["$","body",null,{"children":["$","$L4",null,{"children":["$","$L5",null,{"parallelRouterKey":"children","segmentPath":["children"],"loading":"$undefined","loadingStyles":"$undefined","loadingScripts":"$undefined","hasLoading":false,"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":["$","$L7",null,{}],"notFoundStyles":[],"styles":null}]}]}]}],null]],[[["$","link","0",{"rel":"stylesheet","href":"/FaithCore/_next/static/css/294ccda6c238aff6.css","precedence":"next","crossOrigin":""}]],"$L8"]]]]
+8:[["$","meta","0",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","1",{"charSet":"utf-8"}],["$","title","2",{"children":"FaithCore"}],["$","meta","3",{"name":"description","content":"Plataforma central de gestión cristiana"}]]
+1:null
